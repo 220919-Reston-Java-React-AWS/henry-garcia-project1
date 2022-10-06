@@ -49,7 +49,7 @@ public class ReimbursementRepository {
 
             List<Reimbursement> reimbursements = new ArrayList<>();
 
-            String sql = "SELECT * FROM ReimbursementTable WHERE ticket_status = 'Pending'";
+            String sql = "SELECT * FROM ReimbursementTable";
 
             Statement stmt = connectionObject.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -160,22 +160,33 @@ public class ReimbursementRepository {
         }
     }
 
-//    public Reimbursement processTicket(int ticketId, String ticketStatus, int manId) throws SQLException {
-//
-//        try (Connection connectionObj = ConnectionFactory.createConnection()) {
-//            String sql = "UPDATE ReimbursementTable SET ticket_status = ?, manager_id = ? WHERE submitter_id = ?";
-//
-//            PreparedStatement pstmt = connectionObj.prepareStatement(sql);
-//            int manId = u.getId();
-//
-//            pstmt.setString(1, getTicketStatus());
-//            pstmt.setInt(2, reimbursement.getManid());
-//            pstmt.setInt(3, reimbursement.getEmpid());
-//
-//            int numberOfRecordsUpdated = pstmt.executeUpdate();
-//
-////            return numberOfRecordsUpdated == 1;
-//            return new Reimbursement();
-//        }
-//    }
+    public List<Reimbursement> getAllPendingReimbursements() throws SQLException {
+        try (Connection connectionObject = ConnectionFactory.createConnection()) {
+
+            List<Reimbursement> reimbursements = new ArrayList<>();
+
+            String sql = "SELECT * FROM ReimbursementTable WHERE ticket_status = 'Pending'";
+
+            Statement stmt = connectionObject.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            // ResultSet represents the temporary table of query results
+
+            // Iterating through the ResultSet
+            while (rs.next()) {
+                int id = rs.getInt("request_id");
+                int amount = rs.getInt("reimbursement_amount");
+                String desc = rs.getString("description");
+                String ticketStatus = rs.getString("ticket_status");
+                int empid = rs.getInt("submitter_id");
+                int manid = rs.getInt("manager_id");
+
+                Reimbursement reimbursement = new Reimbursement(id, amount, desc, ticketStatus, empid, manid);
+
+                reimbursements.add(reimbursement); // add reimbursement to List
+            }
+
+            return reimbursements;
+        }
+    }
+
 }

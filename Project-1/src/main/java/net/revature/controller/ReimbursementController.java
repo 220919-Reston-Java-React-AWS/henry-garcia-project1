@@ -47,6 +47,34 @@ public class ReimbursementController {
             }
         });
 
+        app.get("/reimbursements/pending", (ctx) -> {
+            // We must be logged in as a manager
+            HttpSession httpSession = ctx.req.getSession();
+
+            // retrieve the user object from user attribute
+            User user = (User) httpSession.getAttribute("user");
+
+            if (user != null) { // Check if logged in
+                if (user.getRoleId() == 2) { // if they are a manager
+
+                    List<Reimbursement> reimbursements = reimbursementService.getAllPendingReimbursements();
+
+                    ctx.json(reimbursements);
+                } else if (user.getRoleId() == 1) { // if they are an employee
+
+                    ctx.result("Only a manager is able to view all pending reimbursements!");
+                    ctx.status(401);
+
+                } else {
+                    ctx.result("You are logged in, but you're not a manager or employee!");
+                    ctx.status(401);
+                }
+            } else {
+                ctx.result("You are not logged in!");
+                ctx.status(401);
+            }
+        });
+
         app.post("/reimbursements/request", (ctx) -> {
             HttpSession httpSession = ctx.req.getSession();
             User user = (User) httpSession.getAttribute("user");

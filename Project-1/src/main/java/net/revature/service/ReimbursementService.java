@@ -16,6 +16,10 @@ public class ReimbursementService {
         return reimbursementRepository.getAllReimbursements();
     }
 
+    public List<Reimbursement> getAllPendingReimbursements() throws SQLException {
+        return reimbursementRepository.getAllPendingReimbursements();
+    }
+
     public List<Reimbursement> getAllReimbursementsForEmployee(int empId) throws SQLException {
         return reimbursementRepository.getAllReimbursementsForEmployee(empId);
     }
